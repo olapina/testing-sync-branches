@@ -14,10 +14,10 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 14
       - name: Sync Branches PR
         uses: ./
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           SOURCE_BRANCH: "dev"     
-          TARGET_BRANCH_STARS_WITH: "main"
+          TARGET_BRANCH_STARTS_WITH: "main"

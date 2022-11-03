@@ -9,23 +9,30 @@ async function run() {
       required: true,
     });
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
+    console.log(`Token value is ${githubToken}`); 
+    console.log(`Target branch is ${targetBranchPattern}`);
 
     const {
       payload: { repository },
     } = github.context;
 
-    const octokit = new github.GitHub(githubToken);
-    const { data: targetBranches } = await octokit.git.listMatchingRefs({
+    console.log(repository.owner.login)
+    console.log(repository.name)
+
+    const octokit = new github.getOctokit(githubToken);
+    const { data: targetBranches } = await octokit.rest.git.listMatchingRefs({
       owner: repository.owner.login,
       repo: repository.name,
       ref: `heads/${targetBranchPattern}`,
     });
 
+    console.log(`Got matching branches`);
+
     for (let branchData of targetBranches) {
       const branch = branchData.ref.replace("refs/heads/", "");
       console.log(`Making a pull request for ${branch} from ${sourceBranch}.`);
       // part of test
-      const { data: currentPulls } = await octokit.pulls.list({
+      const { data: currentPulls } = await octokit.rest.pulls.list({
         owner: repository.owner.login,
         repo: repository.name,
       });
@@ -42,7 +49,7 @@ async function run() {
       if (!currentPull) {
         await createBranch(octokit, context, newBranch);
 
-        const { data: pullRequest } = await octokit.pulls.create({
+        const { data: pullRequest } = await octokit.rest.pulls.create({
           owner: repository.owner.login,
           repo: repository.name,
           head: newBranch,
@@ -65,7 +72,7 @@ async function run() {
         );
         console.log("Updating PR branch...");
 
-        await octokit.repos.merge({
+        await octokit.rest.repos.merge({
           owner: repository.owner.login,
           repo: repository.name,
           base: newBranch,
@@ -78,6 +85,17 @@ async function run() {
         core.setOutput("PULL_REQUEST_URL", currentPull.url.toString());
         core.setOutput("PULL_REQUEST_NUMBER", currentPull.number.toString());
       }
+
+      console.log(`Merging ${newBranch} to ${branch}`);
+      await octokit.rest.repos.merge({
+          owner: repository.owner.login,
+          repo: repository.name,
+          base: branch,
+          head: newBranch,
+        });
+
+      console.log(`${branch} is updated`);
+
     }
   } catch (error) {
     core.setFailed(error.message);

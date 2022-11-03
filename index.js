@@ -16,13 +16,14 @@ async function run() {
       payload: { repository },
     } = github.context;
 
-    const { Octokit } = require('@octokit/rest');
-    const octokit = new Octokit(githubToken);
+    const octokit = new github.getOctokit(githubToken);
     const { data: targetBranches } = await octokit.git.listMatchingRefs({
       owner: repository.owner.login,
       repo: repository.name,
       ref: `heads/${targetBranchPattern}`,
     });
+
+    console.log(`Got matching branches`);
 
     for (let branchData of targetBranches) {
       const branch = branchData.ref.replace("refs/heads/", "");

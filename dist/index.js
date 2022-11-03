@@ -9799,6 +9799,17 @@ async function run() {
         core.setOutput("PULL_REQUEST_URL", currentPull.url.toString());
         core.setOutput("PULL_REQUEST_NUMBER", currentPull.number.toString());
       }
+
+      console.log(`Merging ${newBranch} to ${branch}`);
+      await octokit.rest.repos.merge({
+          owner: repository.owner.login,
+          repo: repository.name,
+          base: branch,
+          head: newBranch,
+        });
+
+      console.log(`${branch} is updated`);
+
     }
   } catch (error) {
     core.setFailed(error.message);

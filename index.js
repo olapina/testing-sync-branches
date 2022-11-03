@@ -20,7 +20,7 @@ async function run() {
     console.log(repository.name)
 
     const octokit = new github.getOctokit(githubToken);
-    const { data: targetBranches } = await octokit.git.listMatchingRefs({
+    const { data: targetBranches } = await octokit.rest.git.listMatchingRefs({
       owner: repository.owner.login,
       repo: repository.name,
       ref: `heads/${targetBranchPattern}`,

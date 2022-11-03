@@ -26,23 +26,25 @@ async function run() {
     for (let branchData of targetBranches) {
       const branch = branchData.ref.replace("refs/heads/", "");
       console.log(`Making a pull request for ${branch} from ${sourceBranch}.`);
-      // part of test
+
+      // get open pull requests
       const { data: currentPulls } = await octokit.rest.pulls.list({
         owner: repository.owner.login,
         repo: repository.name,
         state: "open",
       });
 
-      // create new branch from SOURCE_BRANCH and PR between new branch and target branch
       const context = github.context;
-      const newBranch = `${sourceBranch}-to-${branch}`;
+      const newBranch = `${sourceBranch}-to-${branch}-${context.sha.slice(-4)}`;
 
+      // see if we already have open PR between SOURCE and TARGET
       const currentPull = currentPulls.find((pull) => {
         console.log(pull.head.ref, pull.base.ref);
         return pull.head.ref === newBranch && pull.base.ref === branch;
       });
 
       if (!currentPull) {
+        // create new branch from SOURCE_BRANCH and PR between new branch and target branch
         await createBranch(octokit, context, newBranch);
 
         const { data: pullRequest } = await octokit.rest.pulls.create({

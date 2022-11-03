@@ -11,6 +11,7 @@ async function run() {
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     console.log(`Token value is ${githubToken}`); 
     console.log(`Target branch is ${targetBranchPattern}`);
+    console.log(repository.owner.login);
 
     const {
       payload: { repository },

@@ -9746,7 +9746,7 @@ async function run() {
       const branch = branchData.ref.replace("refs/heads/", "");
       console.log(`Making a pull request for ${branch} from ${sourceBranch}.`);
       // part of test
-      const { data: currentPulls } = await octokit.pulls.list({
+      const { data: currentPulls } = await octokit.rest.pulls.list({
         owner: repository.owner.login,
         repo: repository.name,
       });
@@ -9763,7 +9763,7 @@ async function run() {
       if (!currentPull) {
         await createBranch(octokit, context, newBranch);
 
-        const { data: pullRequest } = await octokit.pulls.create({
+        const { data: pullRequest } = await octokit.rest.pulls.create({
           owner: repository.owner.login,
           repo: repository.name,
           head: newBranch,
@@ -9786,7 +9786,7 @@ async function run() {
         );
         console.log("Updating PR branch...");
 
-        await octokit.repos.merge({
+        await octokit.rest.repos.merge({
           owner: repository.owner.login,
           repo: repository.name,
           base: newBranch,

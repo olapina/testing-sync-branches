@@ -18,6 +18,6 @@ jobs:
       - name: Sync Branches PR
         uses: ./
         with:
-          GITHUB_TOKEN: ${{secrets.DEV2PROD_SYNC_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           SOURCE_BRANCH: "dev"     
           TARGET_BRANCH_STARTS_WITH: "main"

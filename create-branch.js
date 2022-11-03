@@ -1,12 +1,12 @@
 async function createBranch(octokit, context, branch) {
   try {
-    await octokit.repos.getBranch({
+    await octokit.rest.repos.getBranch({
       ...context.repo,
       branch,
     });
   } catch (error) {
     if (error.name === "HttpError" && error.status === 404) {
-      await octokit.git.createRef({
+      await octokit.rest.git.createRef({
         ref: `refs/heads/${branch}`,
         sha: context.sha,
         ...context.repo,

@@ -9725,11 +9725,13 @@ async function run() {
     const githubToken = core.getInput("GITHUB_TOKEN", { required: true });
     console.log(`Token value is ${githubToken}`); 
     console.log(`Target branch is ${targetBranchPattern}`);
-    console.log(repository.owner.login);
 
     const {
       payload: { repository },
     } = github.context;
+
+    console.log(repository.owner.login)
+    console.log(repository.name)
 
     const octokit = new github.getOctokit(githubToken);
     const { data: targetBranches } = await octokit.git.listMatchingRefs({

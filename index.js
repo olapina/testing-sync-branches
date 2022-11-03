@@ -87,14 +87,16 @@ async function run() {
       }
 
       console.log(`Merging ${newBranch} to ${branch}`);
-      await octokit.rest.repos.merge({
+      const merge_response = await octokit.rest.repos.merge({
           owner: repository.owner.login,
           repo: repository.name,
           base: branch,
           head: newBranch,
         });
 
+      console.log(`Result for the merge of ${newBranch} to ${branch}: ${merge_response.data}`);
       console.log(`${branch} is updated`);
+
 
     }
   } catch (error) {

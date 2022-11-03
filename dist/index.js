@@ -9730,17 +9730,12 @@ async function run() {
       payload: { repository },
     } = github.context;
 
-    console.log(repository.owner.login)
-    console.log(repository.name)
-
     const octokit = new github.getOctokit(githubToken);
     const { data: targetBranches } = await octokit.rest.git.listMatchingRefs({
       owner: repository.owner.login,
       repo: repository.name,
       ref: `heads/${targetBranchPattern}`,
     });
-
-    console.log(`Got matching branches`);
 
     for (let branchData of targetBranches) {
       const branch = branchData.ref.replace("refs/heads/", "");
@@ -9749,6 +9744,7 @@ async function run() {
       const { data: currentPulls } = await octokit.rest.pulls.list({
         owner: repository.owner.login,
         repo: repository.name,
+        state: "open",
       });
 
       // create new branch from SOURCE_BRANCH and PR between new branch and target branch

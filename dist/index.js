@@ -1,6 +1,34 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 2741:
+/***/ ((module) => {
+
+async function createBranch(octokit, context, branch) {
+  try {
+    await octokit.repos.getBranch({
+      ...context.repo,
+      branch,
+    });
+  } catch (error) {
+    if (error.name === "HttpError" && error.status === 404) {
+      await octokit.git.createRef({
+        ref: `refs/heads/${branch}`,
+        sha: context.sha,
+        ...context.repo,
+      });
+    } else {
+      console.log("Error while creating new branch");
+      throw Error(error);
+    }
+  }
+}
+
+module.exports = createBranch;
+
+
+/***/ }),
+
 /***/ 5350:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -9507,14 +9535,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 400:
-/***/ ((module) => {
-
-module.exports = eval("require")("./create-branch");
-
-
-/***/ }),
-
 /***/ 5347:
 /***/ ((module) => {
 
@@ -9694,7 +9714,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
-const createBranch = __nccwpck_require__(400);
+const createBranch = __nccwpck_require__(2741);
 
 async function run() {
   try {
